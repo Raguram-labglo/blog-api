@@ -15,7 +15,7 @@ class Postserializer(serializers.ModelSerializer):
         model = Post
         fields = ['id','user','title', 'body', 'created']
         
-class Posts_detail_erializer(serializers.ModelSerializer):
+class Posts_detail_serializer(serializers.ModelSerializer):
     class Meta:
 
         model = Post
@@ -48,7 +48,13 @@ class Loginserializer(serializers.ModelSerializer):
 
 class Commantserializer(serializers.ModelSerializer):
     commant_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    post = Posts_detail_serializer()
     class Meta:
         model = Comment
-        fields = ['commant_user', 'post']
+        fields = ['commant_user', 'post','commant']
         
+
+class Commant_detail_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ['commant_user', 'post', 'commant']

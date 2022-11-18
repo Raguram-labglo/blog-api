@@ -53,7 +53,7 @@ class Feed(generics.ListAPIView):
 class Feed(generics.ListAPIView):
 
     queryset = Post.objects.all()
-    serializer_class = Posts_detail_erializer
+    serializer_class = Posts_detail_serializer
 
 class Feed_post(generics.ListCreateAPIView):
 
@@ -69,8 +69,12 @@ class Feed_update(generics.RetrieveAPIView):
 
 class Commant(generics.ListAPIView):
     queryset = Comment.objects.all()
-    serializer_class = Commantserializer
+    serializer_class = Commant_detail_serializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
 
+class Commant_post(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = Commantserializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 

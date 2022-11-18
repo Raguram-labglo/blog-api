@@ -14,3 +14,4 @@ class Comment(models.Model):
 
     commant_user = models.ForeignKey(User, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    commant = models.TextField(null = True)

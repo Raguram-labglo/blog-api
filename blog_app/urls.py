@@ -9,5 +9,6 @@ urlpatterns = [
               path('register/', Register.as_view(), name= 'register'),
               path('feed_post/',Feed_post.as_view(), name = 'feed_post'),
               path('update_post/<pk>', Feed_update.as_view(), name = 'update_post'),
-              path('commants/',Commant.as_view(), name = 'commant')
+              path('commants/',Commant.as_view(), name = 'commant'),
+              path('feed_commants/', Commant_post.as_view()),
               ]
