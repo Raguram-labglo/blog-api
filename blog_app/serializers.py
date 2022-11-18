@@ -48,13 +48,14 @@ class Loginserializer(serializers.ModelSerializer):
 
 class Commantserializer(serializers.ModelSerializer):
     commant_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    post = Posts_detail_serializer()
+  
     class Meta:
         model = Comment
         fields = ['commant_user', 'post','commant']
         
 
 class Commant_detail_serializer(serializers.ModelSerializer):
+    post = Posts_detail_serializer()
     class Meta:
         model = Comment
         fields = ['commant_user', 'post', 'commant']
