@@ -1,28 +1,9 @@
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth.models import User
-from rest_framework.fields import CurrentUserDefault
-
-class Userserializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'password']
-
-class Postserializer(serializers.ModelSerializer):
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    class Meta:
-
-        model = Post
-        fields = ['id','user','title', 'body', 'created']
-        
-class Posts_detail_serializer(serializers.ModelSerializer):
-    class Meta:
-
-        model = Post
-        fields = ['id','user','title', 'body', 'created']
+#from rest_framework.fields import CurrentUserDefault
 
 class userSerializers(serializers.ModelSerializer):
- 
     class Meta:
         model = User
         fields = ('id', 'username', 'password', 'email', 'first_name', 'last_name')
@@ -41,21 +22,73 @@ class userSerializers(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class Loginserializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['username', 'password']
 
+
+class Userserializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password']
+ 
+
+class Posts_detail_serializer(serializers.ModelSerializer):
+    
+    class Meta:
+        #comment = serializers.StringRelatedField(many=True)
+        model = Post
+        fields = ['id','user','title', 'body', 'created']
+        read_only_fields = ('user',)
+
+
 class Commantserializer(serializers.ModelSerializer):
     commant_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-  
     class Meta:
         model = Comment
         fields = ['commant_user', 'post','commant']
-        
+
 
 class Commant_detail_serializer(serializers.ModelSerializer):
     post = Posts_detail_serializer()
     class Meta:
         model = Comment
-        fields = ['commant_user', 'post', 'commant']
+        fields = [ 'post','commant_user', 'commant']
+
+
+# class Feed_serializer(serializers.ModelSerializer):
+#    # posts = Posts_detail_serializer()
+#     #comands = Commant_detail_serializer(source = Comment)
+#     class Meta:
+#         model = Feed
+#         fields = ['posts','comands']
+
+class Home(serializers.ModelSerializer):
+    comand = Commant_detail_serializer(many = True)
+
+    class Meta:
+        model = Feed
+        fields = ('post', 'comand',)
+
+    def create(self, validated_data):
+
+        allergies_data =validated_data.pop('allergies', [])
+        names = [Post.get('') for allergy in allergies_data if allergy]
+        al = Comment.objects.filter(post__id=names) # using names(list) for filtering by __in
+
+        user1 = Feed.objects.create(**validated_data)
+        user1.allergies.add(*al) # notice there have * before "al" (as we are putting list inside add()
+
+    # user1.save() # we don't need to call `save()` as we are updating ManyToMany field.
+        return user1
+
+
+class Feed_serializer(serializers.HyperlinkedModelSerializer):
+    detail = Commant_detail_serializer(many=True, read_only=True)
+
+    class Meta:
+        model = Feed
+        fields = ['posts','comands', 'detail']
+
