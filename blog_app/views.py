@@ -49,12 +49,6 @@ class Users_list(generics.ListAPIView):
     serializer_class = Userserializer
 
 
-# class Feed(generics.ListAPIView):
-
-#     queryset = Post.objects.all()
-#     serializer_class = Posts_detail_serializer
-
-
 class CreatePostAPIView(generics.ListCreateAPIView):
 
     queryset = Post.objects.all()

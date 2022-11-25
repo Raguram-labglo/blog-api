@@ -58,19 +58,19 @@ class Commant_detail_serializer(serializers.ModelSerializer):
         fields = [ 'post','commant_user', 'commant']
 
 
-# class Feed_serializer(serializers.ModelSerializer):
-#    # posts = Posts_detail_serializer()
-#     #comands = Commant_detail_serializer(source = Comment)
-#     class Meta:
-#         model = Feed
-#         fields = ['posts','comands']
+class Feed_serializer(serializers.ModelSerializer):
+   # posts = Posts_detail_serializer()
+    #comands = Commant_detail_serializer(source = Comment)
+    class Meta:
+        model = Feed
+        fields = ['posts','comands']
 
 class Home(serializers.ModelSerializer):
-    comand = Commant_detail_serializer(many = True)
+    commant = Commant_detail_serializer(many = True)
 
     class Meta:
         model = Feed
-        fields = ('post', 'comand',)
+        fields = ('commant_user','post', 'commant',)
 
     def create(self, validated_data):
 
@@ -79,16 +79,8 @@ class Home(serializers.ModelSerializer):
         al = Comment.objects.filter(post__id=names) # using names(list) for filtering by __in
 
         user1 = Feed.objects.create(**validated_data)
-        user1.allergies.add(*al) # notice there have * before "al" (as we are putting list inside add()
-
-    # user1.save() # we don't need to call `save()` as we are updating ManyToMany field.
+        user1.allergies.add(*al) 
         return user1
 
 
-class Feed_serializer(serializers.HyperlinkedModelSerializer):
-    detail = Commant_detail_serializer(many=True, read_only=True)
-
-    class Meta:
-        model = Feed
-        fields = ['posts','comands', 'detail']
-
+  
