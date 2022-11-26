@@ -35,52 +35,21 @@ class Userserializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'password']
  
 
-class Posts_detail_serializer(serializers.ModelSerializer):
-    
-    class Meta:
-        #comment = serializers.StringRelatedField(many=True)
-        model = Post
-        fields = ['id','user','title', 'body', 'created']
-        read_only_fields = ('user',)
-
-
-class Commantserializer(serializers.ModelSerializer):
-    commant_user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    class Meta:
-        model = Comment
-        fields = ['commant_user', 'post','commant']
-
-
 class Commant_detail_serializer(serializers.ModelSerializer):
-    post = Posts_detail_serializer()
+   
     class Meta:
         model = Comment
-        fields = [ 'post','commant_user', 'commant']
+        fields = [ 'id' , 'post','commant_user', 'commant']
+        read_only_fields = ('commant_user',)
 
 
-class Feed_serializer(serializers.ModelSerializer):
-   # posts = Posts_detail_serializer()
-    #comands = Commant_detail_serializer(source = Comment)
-    class Meta:
-        model = Feed
-        fields = ['posts','comands']
+class Posts_detail_serializer(serializers.HyperlinkedModelSerializer):
 
-class Home(serializers.ModelSerializer):
-    commant = Commant_detail_serializer(many = True)
+    Comments = Commant_detail_serializer(many = True,read_only =True)
 
     class Meta:
-        model = Feed
-        fields = ('commant_user','post', 'commant',)
-
-    def create(self, validated_data):
-
-        allergies_data =validated_data.pop('allergies', [])
-        names = [Post.get('') for allergy in allergies_data if allergy]
-        al = Comment.objects.filter(post__id=names) # using names(list) for filtering by __in
-
-        user1 = Feed.objects.create(**validated_data)
-        user1.allergies.add(*al) 
-        return user1
-
-
-  
+        
+        model = Post
+        fields = ['url','id','user','title', 'body', 'Comments','created', ]
+        read_only_fields = ('user',)
+ 
