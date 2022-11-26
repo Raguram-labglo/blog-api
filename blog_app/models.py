@@ -12,7 +12,7 @@ class Post(models.Model):
 class Comment(models.Model):
 
     commant_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='Comments')
     commant = models.TextField(null = True)
 
 class Feed(models.Model):

@@ -17,12 +17,10 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .permissions import IsOwnerOrReadOnly
 
 
-class LoginView(generics.GenericAPIView):
-
+class LoginView(APIView):
+    queryset = User.objects.all()
     serializer_class = Loginserializer
-
     def post(self, request):
-
         username = request.data.get("username")
         password = request.data.get("password")
         if username is None or password is None:
@@ -37,7 +35,7 @@ class LoginView(generics.GenericAPIView):
         return Response({'token': token.key})
 
 
-class Register(generics.ListCreateAPIView):
+class Register(viewsets.ModelViewSet):
 
     queryset = User.objects.all()
     serializer_class = userSerializers
@@ -49,39 +47,19 @@ class Users_list(generics.ListAPIView):
     serializer_class = Userserializer
 
 
-class CreatePostAPIView(generics.ListCreateAPIView):
+class CreatePostAPIView(viewsets.ModelViewSet):
 
     queryset = Post.objects.all()
     serializer_class = Posts_detail_serializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def post(self, request, *args, **kwargs):
-        serializer = Posts_detail_serializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=200)
-        else:
-            return Response({"errors": serializer.errors}, status=400)
+    def perform_create(self, serializer):
+        serializer.save(user = self.request.user)
 
 
-class Feed_update(generics.RetrieveUpdateDestroyAPIView):
+class Commant(viewsets.ModelViewSet):
 
-    #permission_classes = [IsOwnerOrReadOnly]
-    queryset = Post.objects.all()
-    serializer_class = Posts_detail_serializer
-
-
-class Commant(generics.ListAPIView):
     queryset = Comment.objects.all()
     serializer_class = Commant_detail_serializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-
-class Commant_post(generics.ListCreateAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = Commantserializer
-
-
-class Feeds(viewsets.ModelViewSet):
-    queryset = Feed.objects.all()
-    serializer_class = Feed_serializer
+    def perform_create(self, serializer):
+        serializer.save(commant_user = self.request.user)
